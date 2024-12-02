@@ -19,7 +19,7 @@ let%expect_test "part1" =
   test |> String.lines |> part1 |> print_endline;
   [%expect {| 11 |}];
 
-  Util.with_in "day1.txt" (fun ic ->
+  Util.with_data_file "day1.txt" (fun ic ->
       IO.read_lines_l ic |> part1 |> print_endline);
   [%expect {| 2970687 |}]
 
@@ -43,6 +43,6 @@ let%expect_test "part2" =
   test |> String.lines |> part2 |> print_endline;
   [%expect {| 31 |}];
 
-  Util.with_in "day1.txt" (fun ic ->
+  Util.with_data_file "day1.txt" (fun ic ->
       IO.read_lines_l ic |> part2 |> print_endline);
   [%expect {| 23963899 |}]
