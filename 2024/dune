@@ -1,6 +1,6 @@
 (library
- (name aoc)
+ (name aoc_2024)
  (inline_tests)
- (libraries iter containers)
+ (libraries containers)
  (preprocess
   (pps ppx_expect)))
