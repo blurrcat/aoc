@@ -1,0 +1,8 @@
+(library
+ (name aoc)
+ (inline_tests)
+ (libraries iter containers)
+ (preprocess
+   (pps ppx_expect)
+ )
+)
