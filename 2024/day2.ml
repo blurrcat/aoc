@@ -30,7 +30,8 @@ let%expect_test "part1" =
 
   Util.with_data_file "day2.txt" (fun ic ->
       IO.read_lines_l ic |> part1 |> print_endline);
-  [%expect {| 224 |}]
+  [%expect {|
+    224 |}]
 
 let is_safe2 report =
   (* generate candidate and check if it's safe *)

@@ -21,7 +21,8 @@ let%expect_test "part1" =
 
   Util.with_data_file "day1.txt" (fun ic ->
       IO.read_lines_l ic |> part1 |> print_endline);
-  [%expect {| 2970687 |}]
+  [%expect {|
+    2970687 |}]
 
 let part2 : string list -> string =
  fun lines ->
@@ -45,4 +46,5 @@ let%expect_test "part2" =
 
   Util.with_data_file "day1.txt" (fun ic ->
       IO.read_lines_l ic |> part2 |> print_endline);
-  [%expect {| 23963899 |}]
+  [%expect {|
+    23963899 |}]
