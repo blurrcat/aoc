@@ -8,5 +8,10 @@ let with_data_file path f =
 
 let sum = List.fold_left Int.( + ) 0
 
-let show_int_list ls =
-  Printf.sprintf "[%s]" (List.map string_of_int ls |> String.concat "; ")
+let print_int_list tag ls =
+  Printf.printf "%s: [%s]\n" tag
+    (List.map string_of_int ls |> String.concat "; ")
+
+let print_int_array tag ls =
+  Printf.printf "%s: [%s]\n" tag
+    (Array.map string_of_int ls |> Array.to_list |> String.concat "; ")
