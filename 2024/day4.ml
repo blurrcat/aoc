@@ -8,6 +8,8 @@ module Graph : sig
     val compare : t -> t -> int
     val equal : t -> t -> bool
     val pp : Format.formatter -> t -> unit
+    val ( + ) : t -> t -> t
+    val ( - ) : t -> t -> t
   end
 
   type 'c t
@@ -15,15 +17,21 @@ module Graph : sig
   val directions : Index.t list
   val of_strings : string list -> char t
   val foldi : ('a -> Index.t -> 'c -> 'a) -> 'a -> 'c t -> 'a
+  val iteri : (Index.t -> 'c -> unit) -> 'c t -> unit
   val find_opt : ('c -> bool) -> 'c t -> (Index.t * 'c) option
   val get : 'c t -> Index.t -> 'c
+  val set : 'c t -> Index.t -> 'c -> unit
   val get_opt : 'c t -> Index.t -> 'c option
   val get_path : 'c t -> Index.t -> Index.t -> int -> 'c list
+  val is_valid_index : 'c t -> Index.t -> bool
+  val pp : 'c Format.printer -> Format.formatter -> 'c t -> unit
 end = struct
   module Index = struct
     type t = int * int
 
-    let move index delta = Pair.map_same2 Int.add index delta
+    let ( + ) = Pair.map_same2 Int.add
+    let ( - ) = Pair.map_same2 Int.sub
+    let move = ( + )
     let equal = Pair.equal Int.equal Int.equal
     let compare = Pair.compare Int.compare Int.compare
     let pp = Pair.pp Int.pp Int.pp
@@ -46,6 +54,7 @@ end = struct
 
   let get g (i, j) = g.data.(i).(j)
   let get_opt g idx = if is_valid_index g idx then Some (get g idx) else None
+  let set g (i, j) c = g.data.(i).(j) <- c
 
   let iteri f g =
     let sx, sy = g.size in
@@ -71,6 +80,11 @@ end = struct
     |> List.map (fun s -> Index.move idx (di * s, dj * s))
     |> List.filter (is_valid_index g)
     |> List.map (get g)
+
+  let pp pc fmt g =
+    let open Format in
+    let row_pp = Format.array ~sep:(return " ") pc in
+    Format.array ~sep:(return "@.") row_pp fmt g.data
 end
 
 let part1 lines =
