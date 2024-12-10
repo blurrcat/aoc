@@ -7,6 +7,7 @@ let with_data_file path f =
   IO.with_in path f
 
 let sum = List.fold_left Int.( + ) 0
+let print_int = Printf.printf "%d\n"
 
 let print_int_list tag ls =
   Printf.printf "%s: [%s]\n" tag
