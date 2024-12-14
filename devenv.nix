@@ -10,12 +10,23 @@ in
     ocamlPkgs.iter
     ocamlPkgs.ppxlib
     ocamlPkgs.ppx_expect
+    # profiling
+    pkgs.linuxPackages_latest.perf
+    pkgs.inferno
   ];
 
   languages.ocaml = {
     enable = true;
     packages = ocamlPkgs;
   };
+
+  scripts.run-perf.exec = ''
+    dune clean
+    dune build --profile release
+    perf record --call-graph dwarf 500 dune runtest
+    perf script | inferno-collapse-perf | inferno-flamegraph > perf.flamegraph.svg
+    echo "open perf.flamegraph.svg"
+  '';
 
   pre-commit.hooks = {
     dune-fmt.enable = true;

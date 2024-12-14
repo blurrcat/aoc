@@ -10,3 +10,5 @@ devenv.local.nix
 
 # dune artifacts
 _build
+
+perf.*
