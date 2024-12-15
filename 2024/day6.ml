@@ -25,20 +25,21 @@ let get_next_pos pos dir =
   in
   Graph.Index.move pos delta
 
+let rec walk : char Graph.t -> IndexSet.t -> Graph.Index.t -> char -> IndexSet.t
+    =
+ fun map path pos dir ->
+  let path = IndexSet.add pos path in
+  let next_pos = get_next_pos pos dir in
+  match Graph.get_opt map next_pos with
+  | Some '.' | Some '^' -> walk map path next_pos dir
+  | Some '#' -> walk map path pos (turn_right dir)
+  | Some _ -> failwith "unexpected tile"
+  | None -> path
+
 let part1 input =
   let map = input |> String.lines |> Graph.of_strings in
   let start_pos, start_dir = find_start map in
-  let rec walk : IndexSet.t -> Graph.Index.t -> char -> int =
-   fun path pos dir ->
-    let path = IndexSet.add pos path in
-    let next_pos = get_next_pos pos dir in
-    match Graph.get_opt map next_pos with
-    | Some '.' | Some '^' -> walk path next_pos dir
-    | Some '#' -> walk path pos (turn_right dir)
-    | Some _ -> failwith "unexpected tile"
-    | None -> path |> IndexSet.to_list |> List.length
-  in
-  walk IndexSet.empty start_pos start_dir
+  walk map IndexSet.empty start_pos start_dir |> IndexSet.to_iter |> Iter.length
 
 module IndexDirSet = Set.Make (struct
   type t = Graph.Index.t * char
@@ -49,8 +50,10 @@ end)
 let part2 input =
   let map = input |> String.lines |> Graph.of_strings in
   let start_pos, start_dir = find_start map in
-  Graph.foldi
-    (fun total new_obstruction _ ->
+  (* only need to test obstrcutions on the path *)
+  let path = walk map IndexSet.empty start_pos start_dir in
+  IndexSet.fold
+    (fun new_obstruction total ->
       let get_opt p =
         if Graph.Index.equal p new_obstruction then Some '#'
         else Graph.get_opt map p
@@ -67,7 +70,7 @@ let part2 input =
           | None -> false
       in
       if is_loop IndexDirSet.empty start_pos start_dir then total + 1 else total)
-    0 map
+    path 0
 
 let test =
   {|....#.....
@@ -93,9 +96,8 @@ let%expect_test "part1" =
 let%expect_test "part2" =
   part2 test |> Printf.printf "%d";
   [%expect {|
-  6 |}]
+  6 |}];
 
-(* this is too slow :( *)
-(* Util.with_data_file "day6.txt" (fun ic -> *)
-(*     IO.read_all ic |> part2 |> Printf.printf "%d"); *)
-(* [%expect {| 1723 |}] *)
+  Util.with_data_file "day6.txt" (fun ic ->
+      IO.read_all ic |> part2 |> Printf.printf "%d");
+  [%expect {| 1723 |}]
