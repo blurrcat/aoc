@@ -23,7 +23,7 @@ in
   scripts.run-perf.exec = ''
     dune clean
     dune build --profile release
-    perf record --call-graph dwarf 500 dune runtest
+    perf record --call-graph dwarf -F 500 dune runtest --profile release
     perf script | inferno-collapse-perf | inferno-flamegraph > perf.flamegraph.svg
     echo "open perf.flamegraph.svg"
   '';
