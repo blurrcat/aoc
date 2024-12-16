@@ -7,6 +7,7 @@ in
   packages = [ 
     pkgs.git
     ocamlPkgs.containers
+    ocamlPkgs.containers-data
     ocamlPkgs.iter
     ocamlPkgs.ppxlib
     ocamlPkgs.ppx_expect
