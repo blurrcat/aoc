@@ -7,6 +7,7 @@ module Graph : sig
     val move : t -> t -> t
     val compare : t -> t -> int
     val equal : t -> t -> bool
+    val hash : t Hash.t
     val pp : Format.formatter -> t -> unit
     val ( + ) : t -> t -> t
     val ( - ) : t -> t -> t
@@ -34,6 +35,7 @@ end = struct
     let move = ( + )
     let equal = Pair.equal Int.equal Int.equal
     let compare = Pair.compare Int.compare Int.compare
+    let hash = Hash.pair Hash.int Hash.int
     let pp = Pair.pp Int.pp Int.pp
   end
 

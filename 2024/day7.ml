@@ -63,7 +63,13 @@ let%expect_test "part1" =
   [%expect {| 2501605301465 |}]
 
 let part2 =
-  let concat n1 n2 = string_of_int n1 ^ string_of_int n2 |> int_of_string in
+  let concat a b =
+    let b_digits =
+      let rec count n acc = if n = 0 then acc else count (n / 10) (acc + 1) in
+      count b (if b = 0 then 1 else 0)
+    in
+    (a * int_of_float (10. ** float_of_int b_digits)) + b
+  in
   solution [ Int.add; Int.mul; concat ]
 
 let%expect_test "part2" =
