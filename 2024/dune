@@ -1,6 +1,7 @@
 (library
  (name aoc_2024)
  (inline_tests)
+ ; (inline_tests (flags (-only-test day10.ml)))
  (libraries containers containers-data iter)
  (preprocess
   (pps ppx_expect)))

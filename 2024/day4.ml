@@ -16,10 +16,13 @@ module Graph : sig
   type 'c t
 
   val directions : Index.t list
+  val of_lists : 'c list list -> 'c t
   val of_strings : string list -> char t
   val foldi : ('a -> Index.t -> 'c -> 'a) -> 'a -> 'c t -> 'a
   val iteri : (Index.t -> 'c -> unit) -> 'c t -> unit
   val find_opt : ('c -> bool) -> 'c t -> (Index.t * 'c) option
+  val find_all : ('c -> bool) -> 'c t -> (Index.t * 'c) list
+  val to_iter : 'c t -> (Index.t * 'c) Iter.t
   val get : 'c t -> Index.t -> 'c
   val set : 'c t -> Index.t -> 'c -> unit
   val get_opt : 'c t -> Index.t -> 'c option
@@ -36,16 +39,22 @@ end = struct
     let equal = Pair.equal Int.equal Int.equal
     let compare = Pair.compare Int.compare Int.compare
     let hash = Hash.pair Hash.int Hash.int
-    let pp = Pair.pp Int.pp Int.pp
+
+    let pp =
+      Format.(
+        Pair.pp ~pp_start:(return "(") ~pp_stop:(return ")")
+          ~pp_sep:(return ",") Int.pp Int.pp)
   end
 
   type 'c t = { data : 'c array array; size : int * int }
 
-  let of_strings ss =
-    let sx = List.length ss in
-    let sy = List.hd ss |> String.length in
-    let data = ss |> Array.of_list |> Array.map String.to_array in
+  let of_lists ll =
+    let sx = List.length ll in
+    let sy = List.hd ll |> List.length in
+    let data = ll |> List.map Array.of_list |> Array.of_list in
     { data; size = (sx, sy) }
+
+  let of_strings ss = ss |> List.map String.to_list |> of_lists
 
   let directions =
     [ (-1, -1); (-1, 0); (-1, 1); (0, 1); (0, -1); (1, -1); (1, 0); (1, 1) ]
@@ -66,6 +75,8 @@ end = struct
       done
     done
 
+  let to_iter g = Iter.from_iter (fun f -> iteri (fun idx c -> f (idx, c)) g)
+
   let foldi f initial g =
     let acc = ref initial in
     iteri (fun idx c -> acc := f !acc idx c) g;
@@ -76,6 +87,9 @@ end = struct
       (fun r idx c ->
         if Option.is_some r then r else if test c then Some (idx, c) else None)
       None
+
+  let find_all test =
+    foldi (fun acc idx c -> if test c then (idx, c) :: acc else acc) []
 
   let get_path g idx (di, dj) n =
     List.range 0 (n - 1)
