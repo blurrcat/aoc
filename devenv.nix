@@ -11,6 +11,7 @@ in
     ocamlPkgs.iter
     ocamlPkgs.ppxlib
     ocamlPkgs.ppx_expect
+    ocamlPkgs.ppx_deriving
     # profiling
     pkgs.linuxPackages_latest.perf
     pkgs.inferno
