@@ -21,3 +21,6 @@ let print_int_list tag ls =
 let print_int_array tag ls =
   Printf.printf "%s: [%s]\n" tag
     (Array.map string_of_int ls |> Array.to_list |> String.concat "; ")
+
+let fst (x, _) = x
+let snd (_, x) = x

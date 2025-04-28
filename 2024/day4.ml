@@ -18,6 +18,7 @@ module Graph : sig
   val directions : Index.t list
   val of_lists : 'c list list -> 'c t
   val of_strings : string list -> char t
+  val size : 'c t -> int * int
   val foldi : ('a -> Index.t -> 'c -> 'a) -> 'a -> 'c t -> 'a
   val iteri : (Index.t -> 'c -> unit) -> 'c t -> unit
   val find_opt : ('c -> bool) -> 'c t -> (Index.t * 'c) option
@@ -55,6 +56,7 @@ end = struct
     { data; size = (sx, sy) }
 
   let of_strings ss = ss |> List.map String.to_list |> of_lists
+  let size g = g.size
 
   let directions =
     [ (-1, -1); (-1, 0); (-1, 1); (0, 1); (0, -1); (1, -1); (1, 0); (1, 1) ]
